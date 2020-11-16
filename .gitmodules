@@ -1,6 +1,3 @@
-[submodule "Repetitions-Expander"]
-	path = Repetitions-Expander
-	url = git@github.com:DIDONEproject/Repetitions-Expander.git
 [submodule "RepetitionsExpander"]
 	path = RepetitionsExpander
 	url = git@github.com:DIDONEproject/RepetitionsExpander.git
