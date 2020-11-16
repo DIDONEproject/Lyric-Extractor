@@ -25,6 +25,8 @@ def get_lyrics(s):
 if __name__ == "__main__":
     try:
       _, args = getopt.getopt(sys.argv[1:], '')
+      if len(args) == 0:
+          raise getopt.GetoptError('')
       folder = args[0]
     except getopt.GetoptError:
         print('lyrics_extractor.py "xmls folder"')
