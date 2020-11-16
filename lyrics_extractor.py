@@ -5,6 +5,8 @@ import json
 import tqdm
 import sys, getopt
 from RepetitionsExpander import remove_repetitions
+import concurrent.futures
+from collections import ChainMap
 
 class lyric_extr:
     def __init__(self, s):
@@ -15,6 +17,10 @@ class lyric_extr:
     def get_lyrics(self):
         return music21.search.lyrics.LyricSearcher(self.score).indexText
         
+def get_lyrics(s):
+    n = os.path.basename(s[:-4])
+    text = lyric_extr(s).get_lyrics()
+    return {n:text}
 
 if __name__ == "__main__":
     try:
@@ -23,10 +29,14 @@ if __name__ == "__main__":
     except getopt.GetoptError:
         print('lyrics_extractor.py "xmls folder"')
         sys.exit(2)
-    name_lyrics = {}
-    for s in tqdm.tqdm(glob.glob(os.path.join(folder, '*.xml'))):
-        text = lyric_extr(s).get_lyrics()
-        xml_name = os.path.basename(s[0:-4])
-        name_lyrics[xml_name] = text
+
+    executor = concurrent.futures.ProcessPoolExecutor()
+    files = glob.glob(os.path.join(folder, '*.xml'))
+    futures = [executor.submit(get_lyrics, s) for s in files]
+    kwargs = {'total': len(files),'unit': 'it','unit_scale': True, 'leave': True}
+    for _ in tqdm.tqdm(concurrent.futures.as_completed(futures), **kwargs):
+        pass
+    
+    name_lyrics = dict(ChainMap(*[f._result for f in futures]))
     with open(os.path.join(os.getcwd(), 'score_lyrics.json'), 'w', encoding='utf-8') as json_file:
         json.dump(name_lyrics, json_file, indent=4, sort_keys=True, ensure_ascii=False)
