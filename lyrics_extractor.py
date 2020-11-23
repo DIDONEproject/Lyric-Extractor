@@ -10,7 +10,10 @@ from collections import ChainMap
 
 class lyric_extr:
     def __init__(self, s):
-        self.score = music21.converter.parse(s)
+        try:
+            self.score = music21.converter.parse(s, forceSource=True)
+        except Exception as e:
+            print(e)
         repeat_elements = remove_repetitions.get_repeat_elements(self.score, v = False)
         self.score = remove_repetitions.expand_score_repetitions(self.score, repeat_elements)
 
@@ -20,7 +23,7 @@ class lyric_extr:
 def get_lyrics(s):
     n = os.path.basename(s[:-4])
     text = lyric_extr(s).get_lyrics()
-    return {n:text}
+    return {n:text.replace('– –', '')}
 
 if __name__ == "__main__":
     try:
