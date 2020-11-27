@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/313289493.svg)](https://zenodo.org/badge/latestdoi/313289493)
+
 # Lyric-Extractor
 Python script that extracts the lyrics from xml scores in JSON format.
 
